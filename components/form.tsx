@@ -201,7 +201,7 @@ export default function InstagramLogin() {
                         {/* Center Card */}
                         <div className="absolute top-0 left-8 w-72 h-[420px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500 z-20 border border-[#262626] bg-[#1a1a1a]">
                             <img
-                                src="https://images.unsplash.com/photo-1523983252436-1d8246c1e956?w=500&q=80"
+                                src="https://images.unsplash.com/photo-1769295746989-9b2144a4e20c?q=80&w=862&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                                 alt="Close friend main"
                                 className="w-full h-full object-cover"
                             />
